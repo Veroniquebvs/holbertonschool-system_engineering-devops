@@ -1,37 +1,62 @@
-# A simple Web Stack
+===============================================================================
+SIMPLE WEB STACK - EXPLANATION
+===============================================================================
 
-## What happens when I type www.foobar.com into my browser?
+What happens when you type "www.foobar.com" in a browser?
 
-### Step 1 : Request
+## STEP 1: REQUEST
 
-The user types `www.foobar.com` in the browser. The browser needs to find the server's IP address to communicate with it.
+The user types "www.foobar.com" in the browser (the application used to visit
+websites). The browser needs to find the server's IP address to communicate
+with it.
 
-### Step 2 : DNS Resolution
+## STEP 2: DNS RESOLUTION
 
-The browser queries the DNS (Domain Name System), which acts as the phonebook of the Internet. It translates the human-readable domain name `foobar.com` into a machine-readable IP address (`8.8.8.8`).
+The browser queries the DNS (Domain Name System). It acts as the phonebook
+of the Internet, translating human-readable domain names into machine-readable
+IP addresses (8.8.8.8).
 
-- **Specifics :** The `www` record in `www.foobar.com` is an **A record** (or **CNAME**) pointing to the server IP `8.8.8.8`.
+- "www" is a subdomain configured via an A RECORD that points directly to
+  the server's IP address (8.8.8.8).
 
-### Step 3 : Connection to the Server (The Protocol)
+## STEP 3: CONNECTION TO THE SERVER (THE PROTOCOL)
 
-Now that the browser has the IP `8.8.8.8`, it sends an HTTP request. The server uses the **TCP/IP protocol suite** (via **port 80** for HTTP) to establish a reliable connection with the user's computer.
+Now that the browser has retrieved the IP address 8.8.8.8 thanks to the DNS,
+it sends an HTTP request. The server uses the TCP/IP PROTOCOL SUITE (via
+PORT 80 for HTTP) to establish a reliable connection with the user's computer.
 
-### Step 4 : Inside the Server
+## STEP 4: INSIDE THE SERVER
 
-A **server** is a physical computer or a Virtual Machine (VM) hosting the application. Inside this server, the request goes through the **LAMP stack**:
+A SERVER is a physical machine (a powerful computer) or a Virtual Machine
+(VM / Container) in the Cloud designed to provide information or services
+to other computers. Inside this server, the request goes through the stack:
 
-- **Web Server (Nginx):** It receives the request on port 80. It handles static files directly or forwards dynamic requests.
-- **Application Server:** It receives the request from Nginx, executes the application files (codebase), and generates the dynamic content.
-- **Database (MySQL):** The application server queries the MySQL database to retrieve data (like user profiles) needed to build the page.
+- WEB SERVER (Nginx): It is the first component to receive the request on
+  port 80. If it is a static page, it sends it back. If it is dynamic content,
+  it forwards the request.
+- APPLICATION SERVER: It receives the request from Nginx, executes the code
+  (the Application files / codebase) to generate the page dynamically.
+- DATABASE (MySQL): To build the page (for example, retrieving user profile
+  information), the application server queries the MySQL database.
 
-### Step 5 : The Response
+## STEP 5: THE RESPONSE
 
-The database replies to the app server -> the app server replies to Nginx -> Nginx sends the final HTML/CSS page back to the user via the TCP/IP connection. The browser displays the website.
+The database replies to the app server -> the app server replies to Nginx ->
+Nginx sends the final HTML/CSS page back via the TCP/IP connection.
+The browser displays the website.
 
----
+===============================================================================
+ISSUES WITH THIS INFRASTRUCTURE
+===============================================================================
 
-### Issues with this Infrastructure
+- SPOF (Single Point of Failure):
+  There is only ONE server. If it catches fire, powers off, or crashes, the
+  entire website goes offline instantly.
 
-- **SPOF (Single Point of Failure) :** There is only one server. If it crashes or catches fire, the entire website goes offline instantly.
-- **Downtime :** Deploying new code or doing maintenance requires restarting services, which cuts off access for users.
-- **Scalability :** If sudden high traffic arrives, CPU, RAM, or MySQL will overload (too many **QPS - Queries Per Second**), causing the server to crash.
+- DOWNTIME:
+  If I want to update my code (deployment), I often have to restart or manipulate
+  the services, which cuts off access to other users during that time.
+
+- SCALABILITY:
+  If 10,000 users arrive at the same time, the CPU, RAM, or MySQL will overload
+  (too many QPS - Queries Per Second), and the server will crash.
