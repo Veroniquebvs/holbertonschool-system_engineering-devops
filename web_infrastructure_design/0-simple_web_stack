@@ -1,0 +1,37 @@
+# A simple Web Stack
+
+## What happens when I type www.foobar.com into my browser?
+
+### Step 1 : Request
+
+The user types `www.foobar.com` in the browser. The browser needs to find the server's IP address to communicate with it.
+
+### Step 2 : DNS Resolution
+
+The browser queries the DNS (Domain Name System), which acts as the phonebook of the Internet. It translates the human-readable domain name `foobar.com` into a machine-readable IP address (`8.8.8.8`).
+
+- **Specifics :** The `www` record in `www.foobar.com` is an **A record** (or **CNAME**) pointing to the server IP `8.8.8.8`.
+
+### Step 3 : Connection to the Server (The Protocol)
+
+Now that the browser has the IP `8.8.8.8`, it sends an HTTP request. The server uses the **TCP/IP protocol suite** (via **port 80** for HTTP) to establish a reliable connection with the user's computer.
+
+### Step 4 : Inside the Server
+
+A **server** is a physical computer or a Virtual Machine (VM) hosting the application. Inside this server, the request goes through the **LAMP stack**:
+
+- **Web Server (Nginx):** It receives the request on port 80. It handles static files directly or forwards dynamic requests.
+- **Application Server:** It receives the request from Nginx, executes the application files (codebase), and generates the dynamic content.
+- **Database (MySQL):** The application server queries the MySQL database to retrieve data (like user profiles) needed to build the page.
+
+### Step 5 : The Response
+
+The database replies to the app server -> the app server replies to Nginx -> Nginx sends the final HTML/CSS page back to the user via the TCP/IP connection. The browser displays the website.
+
+---
+
+### Issues with this Infrastructure
+
+- **SPOF (Single Point of Failure) :** There is only one server. If it crashes or catches fire, the entire website goes offline instantly.
+- **Downtime :** Deploying new code or doing maintenance requires restarting services, which cuts off access for users.
+- **Scalability :** If sudden high traffic arrives, CPU, RAM, or MySQL will overload (too many **QPS - Queries Per Second**), causing the server to crash.
