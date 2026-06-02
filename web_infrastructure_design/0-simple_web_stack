@@ -2,4 +2,68 @@
 SIMPLE WEB STACK
 ===============================================================================
 
+To view the diagram of the simple infrastructure, click here:
 https://imgur.com/a/8aL4Cwj
+
+===============================================================================
+SIMPLE WEB STACK - EXPLANATION
+===============================================================================
+
+What happens when you type "www.foobar.com" in a browser?
+
+## STEP 1: REQUEST
+
+The user types "www.foobar.com" in the browser (the application used to visit
+websites). The browser needs to find the server's IP address to communicate
+with it.
+
+## STEP 2: DNS RESOLUTION
+
+The browser queries the DNS (Domain Name System). It acts as the phonebook
+of the Internet, translating human-readable domain names into machine-readable
+IP addresses (8.8.8.8).
+
+- "www" is a subdomain configured via an A RECORD that points directly to
+  the server's IP address (8.8.8.8).
+
+## STEP 3: CONNECTION TO THE SERVER (THE PROTOCOL)
+
+Now that the browser has retrieved the IP address 8.8.8.8 thanks to the DNS,
+it sends an HTTP request. The server uses the TCP/IP PROTOCOL SUITE (via
+PORT 80 for HTTP) to establish a reliable connection with the user's computer.
+
+## STEP 4: INSIDE THE SERVER
+
+A SERVER is a physical machine (a powerful computer) or a Virtual Machine
+(VM / Container) in the Cloud designed to provide information or services
+to other computers. Inside this server, the request goes through the stack:
+
+- WEB SERVER (Nginx): It is the first component to receive the request on
+  port 80. If it is a static page, it sends it back. If it is dynamic content,
+  it forwards the request.
+- APPLICATION SERVER: It receives the request from Nginx, executes the code
+  (the Application files / codebase) to generate the page dynamically.
+- DATABASE (MySQL): To build the page (for example, retrieving user profile
+  information), the application server queries the MySQL database.
+
+## STEP 5: THE RESPONSE
+
+The database replies to the app server -> the app server replies to Nginx ->
+Nginx sends the final HTML/CSS page back via the TCP/IP connection.
+The browser displays the website.
+
+===============================================================================
+ISSUES WITH THIS INFRASTRUCTURE
+===============================================================================
+
+- SPOF (Single Point of Failure):
+  There is only ONE server. If it catches fire, powers off, or crashes, the
+  entire website goes offline instantly.
+
+- DOWNTIME:
+  If I want to update my code (deployment), I often have to restart or manipulate
+  the services, which cuts off access to other users during that time.
+
+- SCALABILITY:
+  If 10,000 users arrive at the same time, the CPU, RAM, or MySQL will overload
+  (too many QPS - Queries Per Second), and the server will crash.
