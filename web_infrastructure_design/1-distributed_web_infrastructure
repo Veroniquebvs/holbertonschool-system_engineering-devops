@@ -1,0 +1,72 @@
+===============================================================================
+DISTRIBUTED WEB INFRASTRUCTURE - EXPLANATION
+===============================================================================
+
+To view the diagram of the distributed infrastructure, click here:
+https://imgur.com/8i5AqqZ
+
+===============================================================================
+
+## STEP 1: REQUEST AND DNS RESOLUTION
+
+The user types "www.foobar.com" in the browser. The browser queries the DNS
+(Domain Name System) which translates the domain name into the public IP
+address of the Load Balancer (HAProxy).
+
+## STEP 2: THE LOAD BALANCER (HAProxy)
+
+The Load Balancer receives the HTTP request on port 80. Its role is to
+distribute the incoming traffic between the two application servers (Server 1
+and Server 2) so neither is overloaded.
+
+- ALGORITHM: By default, it is configured with the ROUND-ROBIN algorithm.
+  It works as a turn-by-turn system: the 1st request goes to Server 1, the
+  2nd to Server 2, the 3rd to Server 1, and so on.
+- CLUSTER SETUP: HAProxy manages two web servers working at the same time,
+  which means this is an ACTIVE-ACTIVE setup. (In an Active-Passive setup,
+  one server is active while the other is on standby, only turning on if the
+  first one fails).
+
+## STEP 3: WEB AND APPLICATION SERVERS (Server 1 & Server 2)
+
+The Load Balancer forwards the request to one of the two servers. On that
+server, the Nginx WEB SERVER receives the request and passes it to the
+APPLICATION SERVER, which executes the code (codebase).
+
+## STEP 4: DATABASE CLUSTER (Primary-Replica / Master-Slave)
+
+The infrastructure uses a MySQL database cluster designed to optimize data
+handling and synchronization:
+
+- PRIMARY NODE (Master): The Application Server sends all WRITE requests
+  (e.g., creating an account, updating a profile, adding a post) exclusively
+  to the Primary node. It is the only source of truth for data modifications.
+- REPLICA NODE (Slave): The Application Server sends all READ requests
+  (e.g., viewing a page, reading a post, browsing profiles) to the Replica
+  node. The Replica continuously synchronizes and duplicates data from the
+  Primary node in real-time.
+
+===============================================================================
+ISSUES WITH THIS INFRASTRUCTURE
+===============================================================================
+
+1. SPOF (Single Points of Failure):
+
+- The Load Balancer (HAProxy) is a SPOF. If this single machine crashes,
+  no user can access the website anymore, even if the backend servers work.
+- The Primary Database is a SPOF. If it goes down, the application cannot
+  write or save any new data because the Replica can only handle read operations
+  and cannot take over automatically.
+
+2. SECURITY ISSUES:
+
+- No HTTPS: Data is transmitted in clear text over port 80, making it
+  vulnerable to interception or cyberattacks.
+- No Firewall: There is no security barrier to filter incoming traffic and
+  block unauthorized access to private server ports.
+
+3. NO MONITORING:
+
+- There are no tools (like DataDog or Uptime Robot) to track server metrics
+  (CPU, RAM, disk usage) or application health. We won't know if the system
+  slows down or crashes unless a user reports it.
