@@ -43,12 +43,12 @@ By the end of this project, I will be able to confidently explain and whiteboard
 
 ## Project Tasks & Diagrams
 
-| Task                                            | Description                                                             | Diagram Link / Screenshot |
-| :---------------------------------------------- | :---------------------------------------------------------------------- | :------------------------ |
-| **0. Simple web stack**                         | One server, web server, application server, and code deployment basics. | _[Insert Link]_           |
-| **1. Distributed web infrastructure**           | Adding a load balancer and separating server roles.                     | _[Insert Link]_           |
-| **2. Secured and monitored web infrastructure** | Implementing Firewalls, HTTPS/SSL, and a monitoring stack.              | _[Insert Link]_           |
-| **3. Scale up**                                 | Advanced redundancy and high availability implementation.               | _[Insert Link]_           |
+| Task                                            | Description                                                             | Diagram Link / Screenshot   |
+| :---------------------------------------------- | :---------------------------------------------------------------------- | :-------------------------- |
+| **0. Simple web stack**                         | One server, web server, application server, and code deployment basics. | https://imgur.com/a/8aL4Cwj |
+| **1. Distributed web infrastructure**           | Adding a load balancer and separating server roles.                     | https://imgur.com/8i5AqqZ   |
+| **2. Secured and monitored web infrastructure** | Implementing Firewalls, HTTPS/SSL, and a monitoring stack.              | https://imgur.com/IorIfzp   |
+| **3. Scale up**                                 | Advanced redundancy and high availability implementation.               | https://imgur.com/aG5FjIW   |
 
 > _Note: The answer files uploaded to GitHub contain the direct hosted links to the completed whiteboard screenshots as required for manual review._
 
