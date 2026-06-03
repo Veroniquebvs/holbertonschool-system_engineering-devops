@@ -1,0 +1,60 @@
+===============================================================================
+TASK 3: SCALE UP - HIGH AVAILABILITY INFRASTRUCTURE
+===============================================================================
+
+To view the diagram of the scaled-up infrastructure, click here:
+https://imgur.com/undefined
+
+===============================================================================
+WHY EVERY ADDITIONAL ELEMENT WAS ADDED
+===============================================================================
+
+1. SECOND LOAD BALANCER (HAProxy Cluster):
+
+- Why: To eliminate the Load Balancer as a Single Point of Failure (SPOF).
+- How it works: The two HAProxy instances are configured as a cluster in an
+  ACTIVE-PASSIVE setup using a Virtual IP (VRRP/Keepalived). If the Active
+  Load Balancer crashes, the Passive one instantly takes over (Failover),
+  ensuring zero downtime for users.
+
+2. SPLITTING THE COMPONENTS ONTO DEDICATED SERVERS:
+
+- Why: To stop resource competition and optimize performance.
+- In the previous tasks, Nginx, the Application Server, and MySQL shared the
+  same CPU and RAM, causing bottlenecks. By giving each component its own
+  isolated server, they can run at maximum efficiency and be scaled up
+  independently.
+
+3. ADDITIONAL SERVER (Scaling Out):
+
+- Why: To handle more traffic (increasing QPS) and provide redundancy at
+  every layer of the web stack.
+
+===============================================================================
+THE COMPLETE ARCHITECTURE LAYERS (HOW IT FLOWS)
+===============================================================================
+
+- LAYER 1: HIGH AVAILABILITY LOAD BALANCING
+  The user request hits the High Availability HAProxy Cluster (Active-Passive).
+  The active HAProxy routes the traffic to the Web layer.
+
+- LAYER 2: DEDICATED WEB SERVERS (Nginx)
+  The request lands on a dedicated Web Server running Nginx. Its ONLY job
+  is to handle incoming HTTP/HTTPS traffic, serve static assets, and proxy
+  dynamic requests to the next layer.
+
+- LAYER 3: DEDICATED APPLICATION SERVERS
+  The dedicated Application Server receives the request from Nginx. Its ONLY
+  job is to execute the codebase files and generate dynamic content.
+
+- LAYER 4: DEDICATED DATABASE CLUSTER (MySQL)
+  The Application Server connects to the isolated MySQL Database Cluster.
+  Writes go to the Primary node, and Reads go to the Replica node.
+
+===============================================================================
+CONCLUSION: NO MORE SPOF
+===============================================================================
+Thanks to this infrastructure design, if any single server catches fire or
+crashes (a web server, an app server, or a load balancer), another one is
+always ready to handle the traffic. The architecture is now fully redundant,
+secure, and scalable.
