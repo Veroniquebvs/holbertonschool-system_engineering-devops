@@ -1,0 +1,79 @@
+===============================================================================
+SECURED AND MONITORED WEB INFRASTRUCTURE - EXPLANATION
+===============================================================================
+
+What happens when a user requests "https://www.foobar.com"?
+
+To view the diagram of the secured and monitored web infrastructure, click here:
+https://imgur.com/IorIfzp
+
+## STEP 1: HTTPS REQUEST AND DNS RESOLUTION
+
+The user types "https://www.foobar.com" in the browser. The DNS translates
+the domain name into the public IP address of the Load Balancer.
+
+- WHY HTTPS? Traffic is served over HTTPS using an SSL CERTIFICATE to encrypt
+  data traveling between the user and the infrastructure. This prevents
+  hackers from intercepting sensitive information like passwords.
+
+## STEP 2: FIREWALL 1 AND THE LOAD BALANCER
+
+Before reaching the Load Balancer, the request passes through FIREWALL 1.
+
+- WHAT ARE FIREWALLS FOR? Firewalls act as security guards. They filter
+  incoming and outgoing network traffic based on strict rules to block
+  unauthorized access and cyberattacks.
+- FIREWALL 1 RULES: This is a public firewall. It only allows traffic on
+  PORT 80 (HTTP) and PORT 443 (HTTPS). All other ports are closed.
+
+The Load Balancer (HAProxy) receives the secure request and performs SSL
+TERMINATION. It decrypts the HTTPS traffic using the SSL certificate, then
+forwards the request as plain text to the backend servers.
+
+## STEP 3: FIREWALLS 2 & 3 AND THE BACKEND SERVERS (Server 1 & Server 2)
+
+The decrypted request travels to Server 1 or Server 2. To enter, it must pass
+through FIREWALL 2 or FIREWALL 3.
+
+- FIREWALL 2 & 3 RULES: These are private firewalls. They ONLY accept traffic
+  coming from the Load Balancer's IP address. Anyone trying to attack the
+  servers directly without passing through the Load Balancer will be blocked.
+
+Inside the server, the regular LAMP/Nginx process takes place (Nginx ->
+Application Server -> Codebase).
+
+## STEP 4: MONITORING CLIENTS (Data Collectors)
+
+A monitoring client (data collector agent like Sumo Logic or Datadog) is
+installed on the Load Balancer, Server 1, and Server 2.
+
+- WHAT IS MONITORING USED FOR? It monitors system health, tracks performance,
+  and alerts sysadmins immediately if a component fails or overloads.
+- HOW IT COLLECTS DATA: The monitoring agent runs in the background. It
+  constantly reads system logs and queries system metrics (CPU, RAM, disk
+  usage). It then pushes this data over the internet to a central monitoring
+  service dashboard.
+- MONITORING WEB SERVER QPS: To monitor Nginx QPS (Queries Per Second), the
+  agent parses the Nginx access logs ("access.log") or hooks into the Nginx
+  status module ("http_stub_status_module") to count and graph the number of
+  incoming requests every second.
+
+===============================================================================
+ISSUES WITH THIS INFRASTRUCTURE
+===============================================================================
+
+1. SSL TERMINATION AT THE LOAD BALANCER LEVEL:
+   Because SSL decryption happens at the Load Balancer, the traffic between the
+   Load Balancer and the backend servers travels in CLEAR TEXT over the private
+   network. If an attacker breaches the internal network, they can sniff the data.
+
+2. ONLY ONE MYSQL SERVER ACCEPTING WRITES:
+   The Primary Database node is still a SPOF for write operations. If it crashes,
+   the website becomes read-only (users cannot sign up, update profiles, or post).
+   The architecture cannot automatically promote the Replica to Primary.
+
+3. SERVERS WITH ALL THE SAME COMPONENTS:
+   Running Nginx, the Application Server, and MySQL together on the same machine
+   causes resource competition. MySQL could consume all the RAM and crash Nginx.
+   It also makes scaling inefficient, as you cannot scale the database and the
+   web server independently.
